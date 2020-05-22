@@ -19,22 +19,25 @@ export class TNSFontIcon {
       TNSFontIcon.css[currentName] = {};
     };
 
-    const loadFile = (path: string): Promise<any> => {
-      if (TNSFontIcon.debug) {
-        console.log('----------');
-        console.log(`Loading collection '${currentName}' from file: ${path}`);
-      }
-      const cssFile = knownFolders.currentApp().getFile(path);
-      return new Promise((resolve, reject) => {
-        cssFile.readText().then((data) => {
-          const map = lib.mapCss(data, TNSFontIcon.debug);
-          TNSFontIcon.css[currentName] = map;
-          resolve();
-        }, (err) => {
-          reject(err);
-        });
-      });
+    var loadFile = function (path) {
+        if (TNSFontIcon.debug) {
+            console.log('----------');
+            console.log("Loading collection '" + currentName + "' from file: " + path);
+        }
+        
+        return new Promise(function (resolve, reject) {
+            try {
+                var cssFile = knownFolders.currentApp().getFile(path);
+                var cssFileText = cssFile.readTextSync()
+                var mapCss = lib.mapCss(cssFileText, TNSFontIcon.debug)
+                TNSFontIcon.css[currentName] = mapCss;
+                resolve()
+            } catch (e) {
+                reject(e)
+            }
+        })
     };
+          
 
     const loadFiles = (): Promise<any> => {
       return new Promise((resolve) => {
